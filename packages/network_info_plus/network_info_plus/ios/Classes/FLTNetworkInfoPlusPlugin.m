@@ -7,26 +7,14 @@
 #import "FLTCaptiveNetworkInfoProvider.h"
 #import "FLTHotspotNetworkInfoProvider.h"
 #import "FLTNetworkInfo.h"
-#import "FLTNetworkInfoLocationPlusHandler.h"
 #import "FLTNetworkInfoProvider.h"
 #import "SystemConfiguration/CaptiveNetwork.h"
 #import "getgateway.h"
-#import <CoreLocation/CoreLocation.h>
 
 #include <ifaddrs.h>
 
 #include <arpa/inet.h>
 #include <netdb.h>
-
-@interface FLTNetworkInfoPlusPlugin () <CLLocationManagerDelegate>
-
-@property(strong, nonatomic) FLTNetworkInfoLocationPlusHandler *locationHandler;
-@property(strong, nonatomic) id<FLTNetworkInfoProvider> networkInfoProvider;
-
-- (instancetype)initWithNetworkInfoProvider:
-    (id<FLTNetworkInfoProvider>)networkInfoProvider;
-
-@end
 
 @implementation FLTNetworkInfoPlusPlugin {
 }
@@ -50,7 +38,6 @@
 - (instancetype)initWithNetworkInfoProvider:
     (id<FLTNetworkInfoProvider>)networkInfoProvider {
   if ((self = [super init])) {
-    self.networkInfoProvider = networkInfoProvider;
   }
   return self;
 }
@@ -103,42 +90,12 @@
   return addr;
 }
 
-- (NSString *)convertCLAuthorizationStatusToString:
-    (CLAuthorizationStatus)status {
-  switch (status) {
-  case kCLAuthorizationStatusNotDetermined: {
-    return @"notDetermined";
-  }
-  case kCLAuthorizationStatusRestricted: {
-    return @"restricted";
-  }
-  case kCLAuthorizationStatusDenied: {
-    return @"denied";
-  }
-  case kCLAuthorizationStatusAuthorizedAlways: {
-    return @"authorizedAlways";
-  }
-  case kCLAuthorizationStatusAuthorizedWhenInUse: {
-    return @"authorizedWhenInUse";
-  }
-  default: {
-    return @"unknown";
-  }
-  }
-}
-
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
   if ([call.method isEqualToString:@"wifiName"]) {
-    [self.networkInfoProvider
-        fetchNetworkInfoWithCompletionHandler:^(FLTNetworkInfo *networkInfo) {
-          result(networkInfo.SSID);
-        }];
+      result(FlutterMethodNotImplemented);
   } else if ([call.method isEqualToString:@"wifiBSSID"]) {
-    [self.networkInfoProvider
-        fetchNetworkInfoWithCompletionHandler:^(FLTNetworkInfo *networkInfo) {
-          result(networkInfo.BSSID);
-        }];
+      result(FlutterMethodNotImplemented);
   } else if ([call.method isEqualToString:@"wifiIPAddress"]) {
     result([self getWifiIP]);
   } else if ([call.method isEqualToString:@"wifiIPv6Address"]) {
@@ -150,30 +107,13 @@
   } else if ([call.method isEqualToString:@"wifiGatewayAddress"]) {
     result([self getGatewayIP]);
   } else if ([call.method isEqualToString:@"getLocationServiceAuthorization"]) {
-    result([self
-        convertCLAuthorizationStatusToString:[FLTNetworkInfoLocationPlusHandler
-                                                 locationAuthorizationStatus]]);
+      result(FlutterMethodNotImplemented);
   } else if ([call.method
                  isEqualToString:@"requestLocationServiceAuthorization"]) {
-    NSArray *arguments = call.arguments;
-    BOOL always = [arguments.firstObject boolValue];
-    __weak typeof(self) weakSelf = self;
-    [self.locationHandler
-        requestLocationAuthorization:always
-                          completion:^(CLAuthorizationStatus status) {
-                            result([weakSelf
-                                convertCLAuthorizationStatusToString:status]);
-                          }];
+      result(FlutterMethodNotImplemented);
   } else {
     result(FlutterMethodNotImplemented);
   }
-}
-
-- (FLTNetworkInfoLocationPlusHandler *)locationHandler {
-  if (!_locationHandler) {
-    _locationHandler = [FLTNetworkInfoLocationPlusHandler new];
-  }
-  return _locationHandler;
 }
 
 #pragma mark - Utils
