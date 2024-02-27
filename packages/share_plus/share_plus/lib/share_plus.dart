@@ -18,6 +18,11 @@ export 'src/share_plus_windows.dart'
 class Share {
   static SharePlatform get _platform => SharePlatform.instance;
 
+  /// Dismiss iOS share sheet only
+  static Future<void> dismiss() async {
+    return _platform.dismiss();
+  }
+
   /// Summons the platform's share sheet to share uri.
   ///
   /// Wraps the platform's native share dialog. Can share a URL.

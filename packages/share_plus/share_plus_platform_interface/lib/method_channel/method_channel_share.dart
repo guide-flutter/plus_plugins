@@ -24,6 +24,11 @@ class MethodChannelShare extends SharePlatform {
       MethodChannel('dev.fluttercommunity.plus/share');
 
   @override
+  Future<void> dismiss() {
+    return channel.invokeMethod<void>('dismiss');
+  }
+
+  @override
   Future<void> shareUri(
     Uri uri, {
     Rect? sharePositionOrigin,

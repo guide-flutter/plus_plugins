@@ -360,8 +360,18 @@ TopViewControllerForViewController(UIViewController *viewController) {
                   withResult:withResult];
           if (!withResult)
             result(nil);
+        } else if ([@"dismiss" isEqualToString:call.method]) {
+            UIViewController *rootViewController = RootViewController();
+            if (!rootViewController) {
+                result([FlutterError errorWithCode:@"error"
+                                           message:@"No root view controller found"
+                                           details:nil]);
+                return;
+            }
+            [rootViewController dismissViewControllerAnimated:NO completion:nil];
+            result(nil);
         } else {
-          result(FlutterMethodNotImplemented);
+            result(FlutterMethodNotImplemented);
         }
       }];
 }
@@ -383,6 +393,9 @@ TopViewControllerForViewController(UIViewController *viewController) {
 
   activityViewController.popoverPresentationController.sourceView =
       controller.view;
+  activityViewController.excludedActivityTypes = @[
+          UIActivityTypeSaveToCameraRoll,
+  ];
   BOOL isCoordinateSpaceOfSourceView =
       CGRectContainsRect(controller.view.frame, origin);
 
