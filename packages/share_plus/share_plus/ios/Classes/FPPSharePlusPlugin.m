@@ -381,6 +381,9 @@ TopViewControllerForViewController(UIViewController *viewController) {
 
   activityViewController.popoverPresentationController.sourceView =
       controller.view;
+  activityViewController.excludedActivityTypes = @[
+          UIActivityTypeSaveToCameraRoll,
+  ];
   BOOL isCoordinateSpaceOfSourceView =
       CGRectContainsRect(controller.view.frame, origin);
 
