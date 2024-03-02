@@ -31,6 +31,10 @@ class SharePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<void> dismiss() {
+    return _instance.dismiss();
+  }
+
   Future<void> shareUri(Uri uri) => _instance.shareUri(uri);
 
   /// Share text.
